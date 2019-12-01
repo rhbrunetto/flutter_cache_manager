@@ -101,6 +101,15 @@ class WebHelper {
       await new File(path).writeAsBytes(response.bodyBytes);
       return true;
     }
+    if (
+      response.statusCode == 308 &&
+      response.hasHeader(HttpHeaders.locationHeader)
+    ) {
+      return _handleHttpResponse(
+        await _defaultHttpGetter(response.header(HttpHeaders.locationHeader)),
+        cacheObject
+      );
+    }
     if (response.statusCode == 304) {
       await _setDataFromHeaders(cacheObject, response);
       return true;
